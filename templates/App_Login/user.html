@@ -1,0 +1,84 @@
+{% extends 'navbar.html' %}
+{% block title_block %} {{ user.user_profile.full_name}} (@{{user.username}})
+{% endblock %}
+
+{% block css_block %}
+<style>
+.crop{
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+}
+.crop img{
+  width: 400px;
+  height: 600px;
+  margin: -75px 0 0 -100px;
+  padding: 10px;
+}
+
+</style>
+{% endblock %}
+
+{% block body_block %}
+<div class="row">
+    <div class="col-sm-4">
+        {% if user.user_profile.profile_pic %}
+        <a class="nav-link">
+         <img src="/media/{{ user.user_profile.profile_pic }}" width="200px" height="320px"  alt=""  style="border-radius: 50%;">
+        </a>
+      
+      {% else %}
+      <a class="nav-link ">
+        <img src="/static/img/default.png" width="200px" height="200px"  alt="" style="border-radius: 50%;">
+      </a>
+      
+      {% endif %}
+    </div>
+    <div class="col-sm-8">
+    <h3>{{ user.username }} &nbsp; <a href="{% url 'App_Login:edit' %}" class="btn btn-light">Edit Profile</a></h3>
+    <h4>{{user.post.count}} posts &nbsp; {{ user.following.count }} followers &nbsp; {{ user.follower.count }}following</h4>
+    <br>
+    <h4>{{ user.user_profile.full_name}}</h4>
+    <h4>{{ user.user_profile.description|linebreaks }}</h4>
+    <br>
+  </div>
+</div>
+  <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Add Post
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Post a Photo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" enctype="multipart/form-data">
+          {{form.as_p}}
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Post</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>        
+      </div>
+    </div>
+  </div>
+</div>
+<br>
+<!-- Get Post -->
+<div class="row">
+  {% for post in user.post.all  %}
+  <div class="crop">
+<img src="/media/{{post.image}}">
+<br> {{ post.caption }} &nbsp; &nbsp;
+</div>
+<br><br>
+  {% endfor %}
+</div>
+
+{% endblock %}
